@@ -1,5 +1,6 @@
 <?php
-require_once 'connection.php';
+
+include "connection.php";
  
 $link = mysqli_connect($host, $user, $password, $database) 
     or die ("Ошибка подключения к базе данных" . mysqli_error());
@@ -68,8 +69,10 @@ $sql = "CREATE TABLE visit (
   card_id int(10) NOT NULL,
   visit_datetime datetime NOT NULL,
   PRIMARY KEY (visit_id),
-  FOREIGN KEY (client_id) REFERENCES client (client_id),
-  FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
+  KEY client (client_id),
+  KEY doctor (doctor_id),
+  CONSTRAINT fk_visitdoc FOREIGN KEY (client_id) REFERENCES client (client_id),
+  CONSTRAINT fk_visitcl FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
   
 if (mysqli_query($link, $sql)) {
   echo "ОК. Принято.";
@@ -96,7 +99,8 @@ $sql = "CREATE TABLE medcard (
   diagnosis text NOT NULL,
   recommends text NOT NULL,
   PRIMARY KEY (card_id),
-  FOREIGN KEY (client_id) REFERENCES client (client_id))";
+  KEY client (client_id),
+  CONSTRAINT fk_clientcard FOREIGN KEY (client_id) REFERENCES client (client_id))";
   
 if (mysqli_query($link, $sql)) {
   echo "ОК. Принято.";
@@ -122,7 +126,8 @@ $sql = "CREATE TABLE room (
   schedule text NOT NULL,
   responsible text NOT NULL,
   inner_phonenumber int(10) NOT NULL,
-  FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
+  KEY doctor (doctor_id),
+  CONSTRAINT fk_roomdoc FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
   
 if (mysqli_query($link, $sql)) {
   echo "ОК. Принято.";
@@ -149,8 +154,10 @@ $sql = "CREATE TABLE visit_payment (
   amount_pay int(10) NOT NULL,
   pay_status tinyint(1) NOT NULL,
   visit_datetime datetime NOT NULL,
-  FOREIGN KEY (client_id) REFERENCES client (client_id),
-  FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
+  KEY client (client_id),
+  KEY doctor (doctor_id),
+  CONSTRAINT fk_visitpaycl FOREIGN KEY (client_id) REFERENCES client (client_id),
+  CONSTRAINT fk_visitpaydoc FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
   
 if (mysqli_query($link, $sql)) {
   echo "ОК. Принято.";
@@ -173,7 +180,8 @@ $sql = "CREATE TABLE work_schedule (
   doctor_id int(10) NOT NULL,
   workingdays text NOT NULL,
   daysoff text NOT NULL,
-  FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
+  KEY doctor (doctor_id),
+  CONSTRAINT fk_scheduledoc FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
   
 if (mysqli_query($link, $sql)) {
   echo "ОК. Принято.";
@@ -198,7 +206,8 @@ if (mysqli_query($link, $sql)) {
 $sql = "CREATE TABLE pricelist (
   doctor_id int(10) NOT NULL,
   price_per_visit int(10) NOT NULL,
-  FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
+  KEY doctor (doctor_id),
+  CONSTRAINT fk_pricedoctor FOREIGN KEY (doctor_id) REFERENCES doctor (doctor_id))";
   
 if (mysqli_query($link, $sql)) {
   echo "ОК. Принято.";

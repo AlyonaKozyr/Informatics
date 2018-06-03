@@ -1,37 +1,34 @@
 <?php
-$host = 'localhost:8889'; // адрес сервера 
-$user = 'root'; // имя пользователя
-$password = "root"; // пароль
-$database = 'k3143_koz'; // имя базы данных
+
+include "connection.php";
 
 $link = mysqli_connect($host, $user, $password, $database) 
 or die ("Ошибка" . mysqli_error());
 
 echo "Подключились!<br>";
 
-$query = "SELECT doctor.doctor_FIO, room.room_number
-FROM room 
-INNER JOIN
-doctor ON doctor.doctor_id = room.doctor_id;
-while($row = mysqli_fetch_array($res)) { 
-echo "<tr><td>" . $row['Doctor']."</td><td>" . $row['room_number'] . "</td></tr>"; 
-}
+$query = "SELECT doctor.doctor_FIO, room.room_number, doctor.doctor_id
+    FROM room 
+    INNER JOIN
+    doctor ON doctor.doctor_id = room.doctor_id";
 
-$result = mysqli_query($link, $query);
- echo "<table border=1 align=center>
+$res = mysqli_query($link, $query);
+
+echo "<table border=1 align=center>
 <tr>
-<td>ФИО врача</td>
-<td>Номер_кабинета</td>
+<td>ФИО врача</td><td>Номер кабинета</td><td colspan = 2>Change</td>
 </tr>";
 
-while($row = mysqli_fetch_array($result)) {
-	echo "<tr><td>" . $row['doctor_fio']. "</td>";
+
+while($row = mysqli_fetch_array($res)) { 
+	echo "<tr><td>" . $row['doctor_FIO'] . "</td>";
 	echo "<td>" . $row['room_number'] . "</td>";
-	echo "<td><a href = './edit.php?doctor_fio=" . $row['doctor_fio'] . "&input_1=" . $row['doctor_fio'] . "&input_2=" . $row['room_number'] . "'>Update</a></td>";
-	echo "<td><a href = './delete.php?doctor_fio=". $row['doctor_fio'] . "'>Delete</a></td></tr>";
+	echo "<td><a href = 'edit.php?doctor=" . $row['doctor_FIO'] . "&id=" . $row['doctor_id'] . "&room=" . $row['room_number'] . "'>Редактировать</a>";
+	echo "<td><a href = './delete.php?id=" . $row['doctor_id'] . "'>Удалить</a></td></tr>"; 
 }
+
 echo "</table>";
 
 mysqli_close($link);
-?>
 
+?>

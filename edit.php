@@ -1,35 +1,45 @@
 <?php
+
 include "connection.php";
-$doctor_id = $_GET['doctor_id'];
-$_COOKIE
+
+$link = mysqli_connect($host, $user, $password, $database) 
+or die ("Ошибка" . mysqli_error());
+
+$doctor_id = $_GET['id'];
+$name = $_GET['doctor'];
+$room = $_GET['room'];
 
 $query = "SELECT doctor.doctor_FIO, room.room_number
     FROM room 
     INNER JOIN
     doctor ON doctor.doctor_id = room.doctor_id
-    WHERE doctor.doctor_FIO LIKE '%$input_1%'";
+    WHERE doctor.doctor_FIO LIKE '%$name%'";
 
-$result = mysqli_query($link, $query) or die('Ошибка запроса ('.mysqli_error($query).'): '.$query);
+$result = mysqli_query($link, $query);
 
 if(isset($_GET['button']))
 {
-	$input_1 = $_GET['input_1'];
-	$input_2 = $_GET['input_2'];
+	$name = $_GET['doctor'];
+	$room = $_GET['room'];
 
     $query = "UPDATE doctor SET
-    doctor_fio = '".$input_1."'
-    WHERE doctor_id = '".$doctor_id."';";
+    doctor_fio = '" . $name . "'
+    WHERE doctor_id = '" . $doctor_id . "';";
 
-    $result = mysqli_query($link, $query) or die('Ошибка запроса ('.mysqli_error($query).'): '.$query);
+    $result = mysqli_query($link, $query);
 
-    $query = "UPDATE room SET
-    room_number = '".$input_2."';";
+    $query = "UPDATE room 
+    JOIN doctor ON room.doctor_id = doctor.doctor_id 
+	SET room.room_number = '$room'
+	WHERE doctor.doctor_id = '$doctor_id';";
 
-$result = mysqli_query($link, $query) or die('Ошибка запроса ('.mysqli_error($query).'): '.$query);
+	$result = mysqli_query($link, $query);
 
-header('location: ./list.php'); 
+	header('location: ./list.php'); 
 }
+
 ?>
+
 <!DOCTYPE html>
 <html>
 <body>
@@ -37,8 +47,9 @@ header('location: ./list.php');
 	<form method = 'get' action = 'edit.php'>
     <table border='1'>
 	<tr><th><i>Редактировать:</i></th></tr>
-	<tr><td>ФИО врача: <input name = 'input_1' type = 'text' value='<?=@$_GET['input_1']?>'></td></tr>
-	<tr><td>Номер кабинета: <input name = 'input_2' type = 'text' value='<?=@$_GET['input_2']?>'></td></tr>
+	<input hidden name = 'id' type = 'text' value='<?php echo $doctor_id; ?>'>
+	<tr><td>ФИО врача: <input name = 'doctor' type = 'text' value='<?=@$_GET['doctor']?>'></td></tr>
+	<tr><td>Номер кабинета: <input name = 'room' type = 'text' value='<?=@$_GET['room']?>'></td></tr>
 	</table>
 	<br/>
 	<input type = 'submit' name = 'button'>
